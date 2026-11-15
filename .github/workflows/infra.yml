@@ -26,21 +26,19 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2.0.2
-        with:
-          tofu_wrapper: false
 
       - name: Install tflint and trivy
         run: |
           base=https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}
           curl -sSfLO "$base/tflint_linux_amd64.zip"
           curl -sSfL "$base/checksums.txt" | grep tflint_linux_amd64.zip | sha256sum -c
-          unzip -q tflint_linux_amd64.zip
+          unzip tflint_linux_amd64.zip
           sudo install tflint /usr/local/bin/
 
           base=https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}
           file=trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz
           curl -sSfLO "$base/$file"
-          curl -sSfL "$base/trivy_${TRIVY_VERSION}_checksums.txt" | grep " $file$" | sha256sum -c
+          curl -sSfL "$base/trivy_${TRIVY_VERSION}_checksums.txt" | grep "$file" | sha256sum -c
           tar xzf "$file" trivy
           sudo install trivy /usr/local/bin/
 
@@ -50,7 +48,7 @@ jobs:
       - name: tofu validate
         working-directory: infra/management
         run: |
-          tofu init -backend=false
+          tofu init
           tofu validate
 
       - name: tflint

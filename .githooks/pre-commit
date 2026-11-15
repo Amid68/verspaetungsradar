@@ -1,2 +1,2 @@
 #!/bin/sh
-exec betterleaks git --staged --redact --no-banner
+betterleaks git --staged --redact --no-banner
